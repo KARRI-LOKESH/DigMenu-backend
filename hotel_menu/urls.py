@@ -5,9 +5,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('menu.urls')),  # ✅ prefix all API routes with /api/
+    path('api/', include('menu.urls')),
 ]
 
-# Serve media files (works locally; use Cloudinary in production)
+# ✅ Serve media files in both local and production
 if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
