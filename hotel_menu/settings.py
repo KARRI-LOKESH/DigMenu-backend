@@ -1,16 +1,26 @@
 from pathlib import Path
 import os
+import environ
 
+# ------------------------------
+# Environment Setup
+# ------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-^02@a_448_14ln-vgnlf)eublp1u^rc#2gdc@v6ds@1!n@u!z2'
-DEBUG = False  # must be False for production
+# Initialize environment variables
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'localhost',
-    'digmenu-backend.onrender.com',
-]
+# Read .env file
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+# ------------------------------
+# Basic Settings
+# ------------------------------
+SECRET_KEY = env('DJANGO_SECRET_KEY')
+DEBUG = env('DJANGO_DEBUG')
+ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS')
 
 # ------------------------------
 # Installed Apps
@@ -26,7 +36,8 @@ INSTALLED_APPS = [
     # Third-party
     'rest_framework',
     'corsheaders',
-    
+    'cloudinary',
+    'cloudinary_storage',
 
     # Local apps
     'menu',
@@ -38,7 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # must be first
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ needed for Render
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ for Render static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -53,27 +64,35 @@ WSGI_APPLICATION = 'hotel_menu.wsgi.application'
 # ------------------------------
 # Razorpay
 # ------------------------------
-RAZORPAY_KEY_ID = "rzp_test_RFVtNEzSdHSC7c"
-RAZORPAY_KEY_SECRET = "OVjMeanVf6BpFtBkAoVt6s1o"
+RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID')
+RAZORPAY_KEY_SECRET = env('RAZORPAY_KEY_SECRET')
+
+# ------------------------------
+# Cloudinary (for image uploads)
+# ------------------------------
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': env('CLOUDINARY_API_KEY'),
+    'API_SECRET': env('CLOUDINARY_API_SECRET'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ------------------------------
 # CORS / CSRF
 # ------------------------------
 CORS_ALLOWED_ORIGINS = [
+    env('VITE_FRONTEND_URL'),
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://digital-menu-sand.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
-
 CSRF_TRUSTED_ORIGINS = [
+    env('VITE_FRONTEND_URL'),
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://digital-menu-sand.vercel.app",
 ]
-
 CSRF_COOKIE_HTTPONLY = False
 
 # ------------------------------
@@ -100,8 +119,8 @@ TEMPLATES = [
 # ------------------------------
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DJANGO_DB_ENGINE'),
+        'NAME': BASE_DIR / env('DJANGO_DB_NAME'),
     }
 }
 
@@ -124,14 +143,12 @@ USE_I18N = True
 USE_TZ = True
 
 # ------------------------------
-# Static Files (Render)
+# Static & Media Files
 # ------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Optional: only if you have a /static folder in project
 STATICFILES_DIRS = [BASE_DIR / 'static']
-# --- Media Files ---
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
