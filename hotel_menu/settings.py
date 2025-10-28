@@ -51,7 +51,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://digmenu-backend.onrender.com",  # ✅ add this
+    "https://digital-menu-sand.vercel.app", # ✅ add this
 ]
 
 CSRF_COOKIE_HTTPONLY = False
