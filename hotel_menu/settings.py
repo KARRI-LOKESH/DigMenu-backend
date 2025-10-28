@@ -4,7 +4,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-^02@a_448_14ln-vgnlf)eublp1u^rc#2gdc@v6ds@1!n@u!z2'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'digmenu-backend.onrender.com']
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
