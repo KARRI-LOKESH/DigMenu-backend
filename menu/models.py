@@ -1,5 +1,5 @@
 from django.db import models
-
+from cloudinary.models import CloudinaryField 
 # -------------------------------
 # Category Model
 # -------------------------------
@@ -17,7 +17,7 @@ class MenuItem(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
     price = models.FloatField()
-    image = models.ImageField(upload_to='menu_images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     def __str__(self):
